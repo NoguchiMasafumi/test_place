@@ -20,7 +20,7 @@ td {
 .cube3 {
   height: 120px;
   width: 120px;
-  position: relative; /* 子要素のabsolute配置の基準とするため追加 */
+  position: relative;
 }
 
 .cube-container {
@@ -47,7 +47,7 @@ td {
   border: 1px solid #b5b5b5;
   box-sizing: border-box;
   margin: 3px;
-  border-radius: 3px; /* 角丸にする */
+  border-radius: 3px; /* 角丸を再追加 */
 }
 
 .left {
@@ -73,61 +73,73 @@ td {
 .front {
   transform: translateX(-45px) rotateY(-90deg);
 }
-  
-  /* スマートフォン向けのスタイル */
+
+/* スマートフォン向けのスタイル */
 @media screen and (max-width: 600px) {
   body {
     margin: 10px;
-    align-items: center; /* 縦方向中央揃えに変更 */
+    align-items: center;
+  }
+
+  table {
+    max-width: 95%;
+    width: 95%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    table-layout: fixed;
   }
 
   td {
-    padding: 10px;
-    font-size:20px;
+    padding: 2px;
+    font-size: 12px;
+    text-align: center;
+    word-break: break-all;
   }
 
+  /* 画像のスタイルを調整 (px指定) */
   .cube3 {
-    height: 80px;
-    width: 80px;
+    height: 110px; /* 80px * 1.2 */
+    width: 110px;  /* 80px * 1.2 */
   }
 
   .cube-container {
-    margin: -18px 0px 0px 14px; /* サイズに合わせて調整 */
+    margin: -18px 0px 0px 25px; /* -18px * 1.2, 14px * 1.2 */
+    transform: rotateX(-30deg) rotateY(45deg); /* scale() を削除 */
   }
 
   .face-container {
-    width: 60px;
-    height: 60px;
+    width: 72px;  /* 60px * 1.2 */
+    height: 72px; /* 60px * 1.2 */
   }
 
   .square {
-    width: 16px;
-    height: 16px;
-    margin: 2px;
-    border-radius: 3px; /* 角丸にする */
+    width: 19px;  /* 16px * 1.2 */
+    height: 19px; /* 16px * 1.2 */
+    margin: 2.4px; /* 2px * 1.2 */
+    border-radius: 3px;
   }
 
   .left {
-    transform: translateZ(-30px) rotateY(180deg);
+    transform: translateZ(-36px) rotateY(180deg); /* -30px * 1.2 */
   }
 
   .back {
-    transform: translateX(30px) rotateY(90deg);
+    transform: translateX(36px) rotateY(90deg);  /* 30px * 1.2 */
   }
 
   .top {
-    transform: translateY(-30px) rotateX(90deg) rotateZ(90deg);
+    transform: translateY(-36px) rotateX(90deg) rotateZ(90deg); /* -30px * 1.2 */
   }
 
   .right {
-    transform: translateZ(30px);
+    transform: translateZ(36px); /* 30px * 1.2 */
   }
 
   .bottom {
-    transform: translateY(30px) rotateX(-90deg) rotateZ(-90deg);
+    transform: translateY(36px) rotateX(-90deg) rotateZ(-90deg); /* 30px * 1.2 */
   }
 
   .front {
-    transform: translateX(-30px) rotateY(-90deg);
+    transform: translateX(-36px) rotateY(-90deg); /* -30px * 1.2 */
   }
 }
