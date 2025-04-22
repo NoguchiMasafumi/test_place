@@ -1,0 +1,13 @@
+    body { margin: 20px; overflow: auto; background-color: #eee; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+    table { border-collapse: collapse; }
+    td { padding: 20px; text-align: center;}
+    .cube3{height:120px;width:120px;}
+    .cube-container {position: absolute; transform-style: preserve-3d; transform: rotateX(-30deg) rotateY(45deg);margin:-32px 0px 0px 15px;}
+    .face-container {position: absolute;width: 90px;height: 90px;transform-style: preserve-3d;display: flex;flex-wrap: wrap;justify-content: center;align-items: center;}
+    .square { width: 24px; height: 24px; border: 1px solid #b5b5b5; box-sizing: border-box; margin: 3px;}
+    .left { transform: translateZ(-45px) rotateY(180deg); }
+    .back { transform: translateX(45px) rotateY(90deg); }
+    .top { transform: translateY(-45px) rotateX(90deg) rotateZ(90deg);; }
+    .right { transform: translateZ(45px); }
+    .bottom { transform: translateY(45px) rotateX(-90deg) rotateZ(-90deg);; }
+    .front { transform: translateX(-45px) rotateY(-90deg); }
