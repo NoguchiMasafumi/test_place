@@ -1,78 +1,77 @@
 body {
-    margin: 60px; /* さらに大きめの余白 */
-    overflow: auto;
-    background-color: #eee;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-  }
-  
-  table {
-    border-collapse: collapse;
-    width: 95%;
-  }
-  
-  td {
-    padding: 50px; /* さらに大きめのパディング */
-    text-align: center;
-  }
-  
-  .cube3 {
-    height: 260px; /* さらに大きな高さ */
-    width: 260px; /* さらに大きな幅 */
-    position: relative;
-  }
-  
-  .cube-container {
-    position: absolute;
-    transform-style: preserve-3d;
-    transform: rotateX(-30deg) rotateY(45deg);
-    margin: -68px 0px 0px 32px; /* サイズに合わせて調整 */
-  }
-  
-  .face-container {
-    position: absolute;
-    width: 195px; /* さらに大きな幅 */
-    height: 195px; /* さらに大きな高さ */
-    transform-style: preserve-3d;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .square {
-    width: 52px; /* さらに大きな正方形 */
-    height: 52px; /* さらに大きな正方形 */
-    border: 1px solid #b5b5b5;
-    box-sizing: border-box;
-    margin: 6.5px; /* さらに大きめのマージン */
-  }
-  
-  .left {
-    transform: translateZ(-97.5px) rotateY(180deg); /* サイズに合わせて調整 */
-  }
-  
-  .back {
-    transform: translateX(97.5px) rotateY(90deg); /* サイズに合わせて調整 */
-  }
-  
-  .top {
-    transform: translateY(-97.5px) rotateX(90deg) rotateZ(90deg); /* サイズに合わせて調整 */
-  }
-  
-  .right {
-    transform: translateZ(97.5px); /* サイズに合わせて調整 */
-  }
-  
-  .bottom {
-    transform: translateY(97.5px) rotateX(-90deg) rotateZ(-90deg); /* サイズに合わせて調整 */
-  }
-  
-  .front {
-    transform: translateX(-97.5px) rotateY(-90deg); /* サイズに合わせて調整 */
-  }
+  margin: 20px;
+  overflow: auto;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 20px;
+  text-align: center;
+}
+
+.cube3 {
+  height: 120px;
+  width: 120px;
+  position: relative; /* 子要素のabsolute配置の基準とするため追加 */
+}
+
+.cube-container {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: rotateX(-30deg) rotateY(45deg);
+  margin: -32px 0px 0px 15px;
+}
+
+.face-container {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.square {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #b5b5b5;
+  box-sizing: border-box;
+  margin: 3px;
+}
+
+.left {
+  transform: translateZ(-45px) rotateY(180deg);
+}
+
+.back {
+  transform: translateX(45px) rotateY(90deg);
+}
+
+.top {
+  transform: translateY(-45px) rotateX(90deg) rotateZ(90deg);
+}
+
+.right {
+  transform: translateZ(45px);
+}
+
+.bottom {
+  transform: translateY(45px) rotateX(-90deg) rotateZ(-90deg);
+}
+
+.front {
+  transform: translateX(-45px) rotateY(-90deg);
+}
   
   /* スマートフォン向けのスタイル */
 @media screen and (max-width: 600px) {
