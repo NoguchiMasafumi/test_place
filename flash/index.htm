@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ベタフラッシュ（静止画）</title>
+<style>
+  #flash-container {
+    width: 500px;
+    height: 300px;
+    background-color: black; /* 初期背景色 */
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flash-line {
+    position: absolute;
+    background-color: white; /* 線の色 */
+    transform-origin: center center;
+  }
+
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000; /* 文字の色 */
+    font-size: 50px; /* 文字の大きさ */
+    font-weight: bold; /* 文字を太く */
+    text-align: center; /* 文字を中央揃え */
+    z-index: 10; /* 線よりも前面に表示 */
+  }
+</style>
+</head>
+<body>
+
+<div id="flash-container">
+  <div class="center-text">ドーン！！</div>
+</div>
+
+<script>
+  const container = document.getElementById('flash-container');
+  const numLines = 1200; // 線の数をさらに増やしました
+  const lengthMultiplier = 1.5; // ← 長さを伸ばすための係数
+
+  function createStaticFlash() {
+    const centerX = container.offsetWidth / 2;
+    const centerY = container.offsetHeight / 2;
+
+    for (let i = 0; i < numLines; i++) {
+      const line = document.createElement('div');
+      line.classList.add('flash-line');
+
+      const angle = (360 / numLines) * i;
+      const length = Math.random() * Math.max(container.offsetWidth, container.offsetHeight) * lengthMultiplier; // 線の長さをコンテナのサイズよりも長く
+      const thickness = Math.random() * 1 + 1; // 線の太さを少し細く
+
+      line.style.width = `${length}px`;
+      line.style.height = `${thickness}px`;
+      line.style.left = `${centerX - length / 2}px`;
+      line.style.top = `${centerY - thickness / 2}px`;
+      line.style.transform = `rotate(${angle}deg)`;
+      line.style.opacity = 0.9; // 透明度を少し上げました
+
+      container.appendChild(line);
+    }
+  }
+
+  // 静止画を生成
+  createStaticFlash();
+</script>
+
+</body>
+</html>
