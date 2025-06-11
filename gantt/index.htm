@@ -332,14 +332,11 @@
                         taskBarContainer.classList.add('small-font'); // small-fontクラスを追加
                     }
 
-                    // ★追加：タスクバーにクリックイベントリスナーを追加
+                    // タスクバーにクリックイベントリスナーを追加
                     taskBarContainer.addEventListener('click', () => {
-                        // タスク名に加えて、期間も表示したい場合はここに含める
-                        showTooltip(taskBarContainer, `${task.name} (${task.start} - ${task.end})`);
+                        // 期間を含めず、タスク名だけを渡すように修正
+                        showTooltip(taskBarContainer, task.name); // ★変更点：text内容をtask.nameのみに変更
                     });
-                    // ★追加：マウスがバーから離れたらツールチップを隠す（オプション、今回はクリック優先）
-                    // taskBarContainer.addEventListener('mouseleave', hideTooltip);
-
 
                     // バーの開始位置のセルにバーを挿入
                     const startCell = taskRow.children[startDayIndex];
@@ -365,7 +362,6 @@
                 })
                 .catch(error => {
                     console.error('Error loading tasks.json:', error);
-                    // エラー時に代替表示やエラーメッセージを表示することも可能
                     const errorMessage = document.createElement('p');
                     errorMessage.textContent = 'タスクデータの読み込みに失敗しました。';
                     document.body.appendChild(errorMessage);
