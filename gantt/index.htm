@@ -89,6 +89,12 @@
             font-size: 7px;
         }
 
+        /* 複数行のタスクバーのスタイル */
+        .gantt-bar-container.multi-line-bar {
+            height: auto; /* 高さを自動に */
+            padding: 2px 5px; /* 上下のパディングを追加 */
+            white-space: normal; /* 改行を許可 */
+        }
 
         /* ヘッダーを上部に固定 */
         .gantt-chart-container thead {
@@ -274,6 +280,11 @@
                     taskBarContainer.classList.add('gantt-bar-container');
                     taskBarContainer.innerHTML = task.name; // ← textContent → innerHTML に変更
                     taskBarContainer.style.width = `${barWidth}px`;
+
+                    // <br>が含まれていたら高さを増やす
+                    if (task.name.includes('<br>')) {
+                        taskBarContainer.classList.add('multi-line-bar');
+                    }
 
                     // バーの幅がしきい値を下回る場合、フォントサイズを小さくする
                     if (barWidth < smallBarThreshold) {
