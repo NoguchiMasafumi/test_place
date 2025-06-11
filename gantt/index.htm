@@ -82,6 +82,7 @@
             padding: 0 5px; /* タスク名の左右のパディング */
             z-index: 2; /* 休日背景より手前に表示 */
             transition: font-size 0.1s ease-in-out; /* フォントサイズの切り替えをスムーズに */
+            cursor: pointer; /* クリック可能であることを示すカーソル */
         }
 
         /* 小さいフォントのスタイル */
@@ -89,18 +90,35 @@
             font-size: 7px;
         }
 
-        /* 複数行のタスクバーのスタイル */
-        .gantt-bar-container.multi-line-bar {
-            height: auto; /* 高さを自動に */
-            padding: 2px 5px; /* 上下のパディングを追加 */
-            white-space: normal; /* 改行を許可 */
-        }
 
         /* ヘッダーを上部に固定 */
         .gantt-chart-container thead {
             position: sticky;
             top: 0;
             z-index: 10;
+        }
+
+        /* ★追加：ツールチップのスタイル */
+        .gantt-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            white-space: nowrap;
+            z-index: 100; /* 他の要素より手前に表示 */
+            opacity: 0; /* 最初は透明 */
+            transition: opacity 0.2s, transform 0.2s; /* フェードイン/アウトと位置変化のアニメーション */
+            pointer-events: none; /* ツールチップ自体がマウスイベントをブロックしないように */
+            transform: translate(-50%, -10px); /* 中央寄せと少し上にオフセット */
+            display: none; /* JavaScriptで表示を制御 */
+        }
+
+        .gantt-tooltip.show {
+            opacity: 1;
+            transform: translate(-50%, -20px); /* 上に少し移動するアニメーション */
+            display: block; /* 表示する */
         }
     </style>
 </head>
@@ -118,10 +136,15 @@
         </table>
     </div>
 
+    <div id="gantt-tooltip" class="gantt-tooltip"></div>
+
     <script>
+        // tasks.json は別途提供済みとして、fetchで読み込みます
+
         const ganttHeaderYearMonthRow = document.querySelector('.gantt-header-row');
         const ganttDayHeaderRow = document.querySelector('.gantt-day-header');
         const ganttTableBody = document.querySelector('.gantt-table tbody');
+        const tooltip = document.getElementById('gantt-tooltip'); // ツールチップ要素を取得
 
         const dayWidth = 22; // 1日あたりのピクセル幅
         const day_holiday = [0, 6]; // 日曜日(0)と土曜日(6)
@@ -141,6 +164,7 @@
         });
 
         const smallBarThreshold = 90; // この幅（px）を下回ったらフォントサイズを小さくする (例: 2日分の幅)
+        let tooltipHideTimeout; // ツールチップを隠すためのタイマーを保持する変数
 
         function parseDate(dateString) {
             const [year, month, day] = dateString.split('/').map(Number);
@@ -172,7 +196,29 @@
             return isWeekend || isSpecificHoliday;
         }
 
-        // renderGanttChart関数を、tasksデータを受け取るように変更
+        function showTooltip(element, text) {
+            clearTimeout(tooltipHideTimeout); // 既存の非表示タイマーをクリア
+
+            tooltip.textContent = text;
+            tooltip.classList.add('show'); // ツールチップを表示
+
+            // 要素の位置とサイズを取得
+            const rect = element.getBoundingClientRect();
+            // ツールチップを要素の中央上部に配置
+            tooltip.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`;
+            tooltip.style.top = `${rect.top + window.scrollY}px`;
+
+            // ツールチップが自動的に隠れるようにタイマーを設定
+            tooltipHideTimeout = setTimeout(() => {
+                tooltip.classList.remove('show');
+            }, 3000); // 3秒後に非表示
+        }
+
+        function hideTooltip() {
+            clearTimeout(tooltipHideTimeout); // タイマーをクリア
+            tooltip.classList.remove('show'); // ツールチップを非表示
+        }
+
         function renderGanttChart(tasks) {
             // 全タスクの開始日と終了日を考慮してチャートの期間を決定
             let minDate = new Date(Math.min(...tasks.map(task => parseDate(task.start))));
@@ -278,18 +324,22 @@
                     // タスクバーのコンテナを作成
                     const taskBarContainer = document.createElement('div');
                     taskBarContainer.classList.add('gantt-bar-container');
-                    taskBarContainer.innerHTML = task.name; // ← textContent → innerHTML に変更
+                    taskBarContainer.textContent = task.name;
                     taskBarContainer.style.width = `${barWidth}px`;
-
-                    // <br>が含まれていたら高さを増やす
-                    if (task.name.includes('<br>')) {
-                        taskBarContainer.classList.add('multi-line-bar');
-                    }
 
                     // バーの幅がしきい値を下回る場合、フォントサイズを小さくする
                     if (barWidth < smallBarThreshold) {
                         taskBarContainer.classList.add('small-font'); // small-fontクラスを追加
                     }
+
+                    // ★追加：タスクバーにクリックイベントリスナーを追加
+                    taskBarContainer.addEventListener('click', () => {
+                        // タスク名に加えて、期間も表示したい場合はここに含める
+                        showTooltip(taskBarContainer, `${task.name} (${task.start} - ${task.end})`);
+                    });
+                    // ★追加：マウスがバーから離れたらツールチップを隠す（オプション、今回はクリック優先）
+                    // taskBarContainer.addEventListener('mouseleave', hideTooltip);
+
 
                     // バーの開始位置のセルにバーを挿入
                     const startCell = taskRow.children[startDayIndex];
