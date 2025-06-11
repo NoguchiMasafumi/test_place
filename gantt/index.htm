@@ -272,7 +272,7 @@
                     // タスクバーのコンテナを作成
                     const taskBarContainer = document.createElement('div');
                     taskBarContainer.classList.add('gantt-bar-container');
-                    taskBarContainer.textContent = task.name;
+                    taskBarContainer.innerHTML = task.name; // ← textContent → innerHTML に変更
                     taskBarContainer.style.width = `${barWidth}px`;
 
                     // バーの幅がしきい値を下回る場合、フォントサイズを小さくする
