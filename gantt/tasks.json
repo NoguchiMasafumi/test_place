@@ -1,5 +1,5 @@
 [
-    { "name": "DAILY TASK", "start": "2025/06/11", "end": "2025/08/22", "done":0 },
+    { "name": "DAILY TASK", "start": "2025/06/11", "end": "2025/08/29", "done":0 },
     { "name": "commit_data集計訂正", "start": "2025/06/12", "end": "2025/06/12", "done":1 },
     { "name": "BookerVJ CLSパラ 井上MR", "start": "2025/06/12", "end": "2025/06/20", "done":0 },
     { "name": "BookerMM NGOTPE 奥田MR", "start": "2025/06/12", "end": "2025/06/12", "done":0 },
@@ -8,10 +8,10 @@
     { "name": "BookerEK 予約CLSがない", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
     { "name": "BookerVJ 予約失敗理由がない", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
     { "name": "BookerIT 名前入力失敗する", "start": "2025/06/11", "end": "2025/06/13", "done":1 },
-    { "name": "BookerSQ", "start": "2025/06/11", "end": "2025/06/20", "done":0 },
-    { "name": "BookerQR ADU寸止め-SAB 関野MS", "start": "2025/06/23", "end": "2025/07/04", "done":0 },
-    { "name": "middle_tasks TR tc_chk 大熊MS", "start": "2025/07/7", "end": "2025/07/18", "done":0 },
-    { "name": "INF json API 久保MR", "start": "2025/07/7", "end": "2025/07/18", "done":0 },
-    { "name": "KIX NDC SQ 玉岡MR", "start": "2025/07/22", "end": "2025/08/08", "done":0 },
-    { "name": "AirPort STS 内田MR", "start": "2025/08/18", "end": "2025/08/22", "done":0 }
+    { "name": "BookerSQ", "start": "2025/06/11", "end": "2025/06/27", "done":0 },
+    { "name": "BookerQR ADU寸止め-SAB 関野MS", "start": "2025/06/30", "end": "2025/07/11", "done":0 },
+    { "name": "middle_tasks TR tc_chk 大熊MS", "start": "2025/07/14", "end": "2025/07/25", "done":0 },
+    { "name": "INF json API 久保MR", "start": "2025/07/14", "end": "2025/07/25", "done":0 },
+    { "name": "KIX NDC SQ 玉岡MR", "start": "2025/07/28", "end": "2025/08/22", "done":0 },
+    { "name": "AirPort STS 内田MR", "start": "2025/08/25", "end": "2025/08/29", "done":0 }
 ]
