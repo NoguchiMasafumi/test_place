@@ -1,10 +1,11 @@
 [
-    { "name": "DAILY TASK", "start": "2025/06/11", "end": "2025/08/22", "done": 0},
-    { "name": "BookerSQ", "start": "2025/06/11", "end": "2025/06/20", "done": 0},
-    { "name": "BookerEK 予約CLSがない", "start": "2025/06/11", "end": "2025/06/20", "done": 0},
-    { "name": "BookerVJ 予約失敗理由がない", "start": "2025/06/11", "end": "2025/06/20", "done": 0},
-    { "name": "QR ADU寸止め-SAB", "start": "2025/06/23", "end": "2025/07/04", "done": 0},
-    { "name": "middle_tasks TR tc_chk", "start": "2025/07/7", "end": "2025/07/18", "done": 0},
-    { "name": "INF json API", "start": "2025/07/7", "end": "2025/07/18", "done": 0},
-    { "name": "KIX NDC SQ", "start": "2025/07/22", "end": "2025/08/08", "done": 0}
+    { "name": "DAILY TASK", "start": "2025/06/11", "end": "2025/08/22", "done":0 },
+    { "name": "commi_data集計訂正", "start": "2025/06/12", "end": "2025/06/12", "done":0 },
+    { "name": "BookerEK 予約CLSがない", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
+    { "name": "BookerVJ 予約失敗理由がない", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
+    { "name": "BookerSQ", "start": "2025/06/11", "end": "2025/06/20", "done":0 },
+    { "name": "BookerQR ADU寸止め-SAB", "start": "2025/06/23", "end": "2025/07/04", "done":0 },
+    { "name": "middle_tasks TR tc_chk", "start": "2025/07/7", "end": "2025/07/18", "done":0 },
+    { "name": "INF json API", "start": "2025/07/7", "end": "2025/07/18", "done":0 },
+    { "name": "KIX NDC SQ", "start": "2025/07/22", "end": "2025/08/08", "done":0 }
 ]
