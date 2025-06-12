@@ -69,8 +69,8 @@
             transform: translateY(-50%); /* 中央揃えのための調整 */
             height: 30px; /* バーの高さ */
             border-radius: 4px;
-            background-color: #4CAF50;
-            color: white;
+            background: #4caf50; /* 緑 */
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -90,6 +90,10 @@
             font-size: 7px;
         }
 
+        .gantt-bar-done {
+            background: #aaa !important; /* グレー */
+            color: #fff;
+        }
 
         /* ヘッダーを上部に固定 */
         .gantt-chart-container thead {
@@ -324,10 +328,13 @@
                     // タスクバーのコンテナを作成
                     const taskBarContainer = document.createElement('div');
                     taskBarContainer.classList.add('gantt-bar-container');
+                    if (task.done === 1) {
+                        taskBarContainer.classList.add('gantt-bar-done'); // done:1ならグレー
+                    }
                     taskBarContainer.textContent = task.name;
                     taskBarContainer.style.width = `${barWidth}px`;
 
-                    // バーの幅がしきい値を下回る場合、フォントサイズを小さくする
+                    // バーの幅がしきい値を下回った場合、フォントサイズを小さくする
                     if (barWidth < smallBarThreshold) {
                         taskBarContainer.classList.add('small-font'); // small-fontクラスを追加
                     }
