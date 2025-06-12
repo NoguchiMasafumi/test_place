@@ -11,5 +11,6 @@
     { "name": "BookerQR ADU寸止め-SAB", "start": "2025/06/23", "end": "2025/07/04", "done":0 },
     { "name": "middle_tasks TR tc_chk", "start": "2025/07/7", "end": "2025/07/18", "done":0 },
     { "name": "INF json API", "start": "2025/07/7", "end": "2025/07/18", "done":0 },
-    { "name": "KIX NDC SQ", "start": "2025/07/22", "end": "2025/08/08", "done":0 }
+    { "name": "KIX NDC SQ", "start": "2025/07/22", "end": "2025/08/08", "done":0 },
+    { "name": "AirPort STS", "start": "2025/08/18", "end": "2025/08/22", "done":0 }
 ]
