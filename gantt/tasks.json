@@ -8,7 +8,7 @@
     { "name": "BookerIT 名前入力失敗する", "start": "2025/06/11", "end": "2025/06/13", "done":1 },
     { "name": "BookerMM NGOTPE 奥田MR", "start": "2025/06/12", "end": "2025/06/12", "done":1 },
     { "name": "get_apiVJ 鶴田MS", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
-    { "name": "BookerEK 予約CLSがない", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
+    { "name": "BookerEK 予約CLSがない", "start": "2025/06/11", "end": "2025/06/13", "done":1 },
     { "name": "BookerVJ 予約失敗理由がない", "start": "2025/06/11", "end": "2025/06/13", "done":0 },
     { "name": "BookerSQ", "start": "2025/06/11", "end": "2025/06/27", "done":0 },
     { "name": "BookerQR ADU寸止め-SAB 関野MS", "start": "2025/06/30", "end": "2025/07/11", "done":0 },
