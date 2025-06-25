@@ -20,6 +20,8 @@
     { "name": "BookerEK 予約CLSがない", "start": "2025/06/11", "end": "2025/06/13", "done":1 },
     { "name": "BookerVJ 予約失敗理由がない", "start": "2025/06/11", "end": "2025/06/13", "done":1 },
     { "name": "BookerSQ", "start": "2025/06/11", "end": "2025/06/27", "done":1 },
+    { "name": "INDIVI集計 南MS", "start": "2025/06/25", "end": "2025/07/02", "done":0 },
+    { "name": "MH BLK RQ 永山MR", "start": "2025/06/25", "end": "2025/07/02", "done":0 },
     { "name": "middle_tasks TR tc_chk 大熊MS", "start": "2025/06/30", "end": "2025/07/11", "done":0 },
     { "name": "INF json API 久保MR", "start": "2025/06/30", "end": "2025/07/11", "done":0 },
     { "name": "KIX NDC SQ 玉岡MR", "start": "2025/07/14", "end": "2025/08/01", "done":0 },
