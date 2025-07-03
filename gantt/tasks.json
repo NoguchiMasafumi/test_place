@@ -10,6 +10,6 @@
     { "name": "INF json API 久保MR", "start": "2025/06/30", "end": "2025/07/11", "done":0 },
     { "name": "KIX NDC SQ 玉岡MR", "start": "2025/07/14", "end": "2025/08/01", "done":0 },
     { "name": "AirPort STS 内田MR", "start": "2025/08/4", "end": "2025/08/22", "done":1 },
-    { "name": "BookerQR ADU寸止め-SAB 関野MS", "start": "2025/08/04", "end": "2025/08/15", "done":0 },
-    { "name": "Booker精算 久保MR", "start": "2025/08/04", "end": "2025/08/15", "done":0 }
+    { "name": "BookerQR ADU寸止め-SAB 関野MS", "start": "2025/08/04", "end": "2025/08/22", "done":0 },
+    { "name": "Booker精算 久保MR", "start": "2025/08/04", "end": "2025/08/22", "done":0 }
 ]
