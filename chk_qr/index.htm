@@ -2,16 +2,16 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bwip-js/dist/bwip-js-min.js"></script>
 </head>
 <body>
 
     <input type="file" id="u" accept="image/*">
-    <p id="r">結果がここに表示されます</p>
+    <p id="r">結果を表示します</p>
     <canvas id="c" style="display:none;"></canvas>
 
     <script>
-        document.getElementById('u').addEventListener('change', (e) => {
+        document.getElementById('u').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -25,15 +25,18 @@
                     canvas.height = img.height;
                     ctx.drawImage(img, 0, 0);
 
-                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const code = jsQR(imgData.data, imgData.width, imgData.height);
-
-                    document.getElementById('r').innerText = code ? code.data : "検出失敗";
+                    try {
+                        // bwip-jsを利用したデコード
+                        const result = bwipjs.readBarcode(canvas, 'micropdf417');
+                        document.getElementById('r').innerText = result.text;
+                    } catch (err) {
+                        document.getElementById('r').innerText = "エラー: " + err;
+                    }
                 };
                 img.src = ev.target.result;
             };
             reader.readAsDataURL(file);
-        });
+        };
     </script>
 </body>
 </html>
