@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/bwip-js/dist/bwip-js-min.js"></script>
+</head>
+<body>
+
+    <input type="text" id="t" value="ABCDEFG">
+    <button id="b">生成</button>
+    <br><br>
+    <canvas id="c"></canvas>
+    <br>
+    <button id="d" style="display:none;">JPGとして保存</button>
+
+    <script>
+        const t = document.getElementById('t');
+        const c = document.getElementById('c');
+        const b = document.getElementById('b');
+        const d = document.getElementById('d');
+
+        b.onclick = () => {
+            try {
+                bwipjs.toCanvas(c, {
+                    bcid: 'micropdf417', // 規格名
+                    text: t.value,       // 入力テキスト
+                    scale: 3,            // 解像度（大きくすると鮮明になります）
+                    includetext: true    // 下に文字を表示するか
+                });
+                d.style.display = 'inline';
+            } catch (e) {
+                alert('生成エラー: ' + e);
+            }
+        };
+
+        d.onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'micropdf417.jpg';
+            // CanvasをJPGデータに変換（背景を白にするため一旦Imageで処理するのが理想ですが、簡易的に）
+            link.href = c.toDataURL('image/jpeg', 1.0);
+            link.click();
+        };
+    </script>
+</body>
+</html>
