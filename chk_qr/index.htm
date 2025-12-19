@@ -2,40 +2,36 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/bwip-js/dist/bwip-js-min.js"></script>
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 <body>
 
     <input type="file" id="u" accept="image/*">
     <p id="r">結果を表示します</p>
-    <canvas id="c" style="display:none;"></canvas>
 
     <script>
+        const reader = new ZXing.BrowserPDF417Reader();
+        const r = document.getElementById('r');
+
         document.getElementById('u').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.getElementById('c');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-
-                    try {
-                        // bwip-jsを利用したデコード
-                        const result = bwipjs.readBarcode(canvas, 'micropdf417');
-                        document.getElementById('r').innerText = result.text;
-                    } catch (err) {
-                        document.getElementById('r').innerText = "エラー: " + err;
-                    }
-                };
-                img.src = ev.target.result;
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            
+            img.onload = () => {
+                reader.decodeFromImageElement(img)
+                    .then(result => {
+                        r.innerText = result.text;
+                        URL.revokeObjectURL(url);
+                    })
+                    .catch(err => {
+                        r.innerText = "検出失敗: " + err;
+                        URL.revokeObjectURL(url);
+                    });
             };
-            reader.readAsDataURL(file);
+            img.src = url;
         };
     </script>
 </body>
