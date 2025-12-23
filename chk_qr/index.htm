@@ -2,36 +2,68 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
 </head>
 <body>
-2.2<br />
-    <input type="file" id="u" accept="image/*">
-    <p id="r">結果を表示します</p>
+2.3<br />
+    <div>
+        <h3>生成</h3>
+        <input type="text" id="t" value="ABCDEFG">
+        <button id="gb">生成</button>
+        <br>
+        <canvas id="c"></canvas>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>読み取り (microPDF417)</h3>
+        <input type="file" id="u" accept="image/*">
+        <p id="r">結果を表示します</p>
+    </div>
 
     <script>
-        const reader = new ZXing.BrowserPDF417Reader();
-        const r = document.getElementById('r');
+        const generator = window.bwipjs;
+        
+        document.getElementById('gb').onclick = () => {
+            const txt = document.getElementById('t').value;
+            if (!txt) return;
+            try {
+                generator.toCanvas('c', {
+                    bcid: 'micropdf417',
+                    text: txt,
+                    scale: 3,
+                    backgroundcolor: 'FFFFFF'
+                });
+            } catch (e) { alert(e); }
+        };
 
         document.getElementById('u').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            const url = URL.createObjectURL(file);
-            const img = new Image();
-            
-            img.onload = () => {
-                reader.decodeFromImageElement(img)
-                    .then(result => {
-                        r.innerText = result.text;
-                        URL.revokeObjectURL(url);
-                    })
-                    .catch(err => {
-                        r.innerText = "検出失敗: " + err;
-                        URL.revokeObjectURL(url);
-                    });
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const cvs = document.createElement('canvas');
+                    const ctx = cvs.getContext('2d');
+                    cvs.width = img.width;
+                    cvs.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    try {
+                        // bwip-jsの読み取り機能（最新版の実験的機能）を試行
+                        const result = bwipjs.readBarcode(cvs, 'micropdf417');
+                        document.getElementById('r').innerText = result.text;
+                    } catch (err) {
+                        document.getElementById('r').innerText = "検出失敗: microPDF417は非常に高精度な画像が必要です。";
+                        console.error(err);
+                    }
+                };
+                img.src = ev.target.result;
             };
-            img.src = url;
+            reader.readAsDataURL(file);
         };
     </script>
 </body>
