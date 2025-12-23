@@ -5,39 +5,11 @@
     <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
 </head>
 <body>
-2.3<br />
-    <div>
-        <h3>生成</h3>
-        <input type="text" id="t" value="ABCDEFG">
-        <button id="gb">生成</button>
-        <br>
-        <canvas id="c"></canvas>
-    </div>
-
-    <hr>
-
-    <div>
-        <h3>読み取り (microPDF417)</h3>
-        <input type="file" id="u" accept="image/*">
-        <p id="r">結果を表示します</p>
-    </div>
+2.4<br />
+    <input type="file" id="u" accept="image/*">
+    <p id="r">ここに結果が出ます</p>
 
     <script>
-        const generator = window.bwipjs;
-        
-        document.getElementById('gb').onclick = () => {
-            const txt = document.getElementById('t').value;
-            if (!txt) return;
-            try {
-                generator.toCanvas('c', {
-                    bcid: 'micropdf417',
-                    text: txt,
-                    scale: 3,
-                    backgroundcolor: 'FFFFFF'
-                });
-            } catch (e) { alert(e); }
-        };
-
         document.getElementById('u').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -46,19 +18,18 @@
             reader.onload = (ev) => {
                 const img = new Image();
                 img.onload = () => {
-                    const cvs = document.createElement('canvas');
-                    const ctx = cvs.getContext('2d');
-                    cvs.width = img.width;
-                    cvs.height = img.height;
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
                     ctx.drawImage(img, 0, 0);
-                    
+
                     try {
-                        // bwip-jsの読み取り機能（最新版の実験的機能）を試行
-                        const result = bwipjs.readBarcode(cvs, 'micropdf417');
+                        // microPDF417を指定してデコード
+                        const result = bwipjs.readBarcode(canvas, 'micropdf417');
                         document.getElementById('r').innerText = result.text;
                     } catch (err) {
-                        document.getElementById('r').innerText = "検出失敗: microPDF417は非常に高精度な画像が必要です。";
-                        console.error(err);
+                        document.getElementById('r').innerText = "失敗: " + err;
                     }
                 };
                 img.src = ev.target.result;
