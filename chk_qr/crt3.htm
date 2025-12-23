@@ -2,18 +2,21 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>MicroPDF417 Generator with Margin</title>
+    <title>PDF417 Generator with Margin</title>
     <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
     <style>
         body { font-family: sans-serif; margin: 20px; }
         canvas { border: 1px solid #ccc; margin-top: 10px; }
+        .controls { margin-bottom: 10px; }
     </style>
 </head>
 <body>
-3.4<br />
-    <input type="text" id="t" value="ABCDEFG">
-    <button id="b">生成</button>
-    <br><br>
+    <h2>PDF417 ジェネレーター</h2>
+    <div class="controls">
+        <input type="text" id="t" value="ABCDEFG" style="width: 300px;">
+        <button id="b">生成</button>
+    </div>
+    
     <canvas id="c"></canvas>
     <br><br>
     <button id="d" style="display:none;">JPGとして保存</button>
@@ -27,30 +30,29 @@
         b.onclick = () => {
             if (!t.value) return;
 
-            // bwipjsの呼び出し
             const generator = window.bwipjs || bwipjs;
 
             if (!generator) {
-                alert("ライブラリがまだ読み込まれていません。再読み込みしてください。");
+                alert("ライブラリが読み込まれていません。");
                 return;
             }
 
             try {
-                // toCanvasメソッドでオプションを指定
+                // PDF417形式で描画
                 generator.toCanvas(c, {
-                    bcid: 'micropdf417',   // バーコードの種類
+                    bcid: 'pdf417',         // ここを 'pdf417' に変更
                     text: t.value,         // 入力データ
-                    scale: 3,              // 拡大倍率
-                    height: 10,            // バーの高さ
-                    includetext: true,     // テキストを表示するか
-                    backgroundcolor: 'FFFFFF', // 背景色を白に指定（重要）
+                    scale: 2,              // PDF417は横に長くなりやすいため、scaleを少し調整
+                    height: 12,            // 各行の高さ
+                    includetext: false,    // PDF417は通常下にテキストを表示しないためfalseを推奨
+                    backgroundcolor: 'FFFFFF',
                     
                     // --- 余白の設定 ---
-                    paddingwidth: 15,      // 左右に15の余白（scale倍されます）
-                    paddingheight: 15,     // 上下に15の余白（scale倍されます）
+                    paddingwidth: 10,      
+                    paddingheight: 10,     
                 });
 
-                // 生成に成功したら保存ボタンを表示
+                // 保存ボタンを表示
                 d.style.display = 'inline';
             } catch (e) {
                 console.error(e);
@@ -61,8 +63,7 @@
         // 保存ボタンの処理
         d.onclick = () => {
             const link = document.createElement('a');
-            link.download = 'micropdf417_with_margin.jpg';
-            // canvasの内容をJPGデータに変換
+            link.download = 'pdf417_output.jpg';
             link.href = c.toDataURL('image/jpeg', 1.0);
             link.click();
         };
