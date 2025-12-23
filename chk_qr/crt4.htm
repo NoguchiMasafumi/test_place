@@ -2,44 +2,46 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>搭乗手続き用コード生成</title>
+    <title>搭乗手続き用コード生成ツール</title>
     <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: "Helvetica Neue", "Arial", "Hiragino Sans", "Meiryo", sans-serif; margin: 20px; background-color: #f0f2f5; }
-        .input-container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; margin: 0 auto 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
-        .form-group label { font-size: 12px; color: #666; font-weight: bold; }
-        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        /* 入力画面のスタイル */
+        body { font-family: "Helvetica Neue", "Arial", "Hiragino Sans", "Meiryo", sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        .input-container { max-width: 700px; background: white; padding: 30px; border-radius: 12px; margin: 0 auto 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; color: #555; font-weight: bold; margin-bottom: 5px; }
+        input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
         .full { grid-column: span 2; }
-        button { padding: 15px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #28a745; color: white; width: 100%; margin-top: 10px; font-size: 16px; }
+        button { padding: 18px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; background: #0056b3; color: white; width: 100%; margin-top: 20px; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #003d7a; }
         
-        /* --- PDF出力用エリア --- */
-        #pdf-wrapper { 
-            display: none; /* 通常は見せない */
-        }
+        /* PDFレイアウト設定（A4サイズに最適化） */
+        #pdf-wrapper { display: none; } /* プレビュー用 */
         #pdf-template {
-            width: 180mm;
-            padding: 20mm;
+            width: 170mm; /* 右切れ防止のため幅を狭めに設定 */
+            padding: 15mm;
             background: white;
             line-height: 1.8;
             color: #000;
+            box-sizing: border-box;
         }
-        .pdf-title { text-align: center; font-size: 26px; font-weight: bold; margin-bottom: 40px; border-bottom: 3px solid #000; padding-bottom: 10px; }
-        .user-name { font-size: 20px; margin-bottom: 30px; border-bottom: 1px solid #000; display: inline-block; padding-right: 20px; }
-        .message { margin-bottom: 40px; font-size: 14px; }
-        .barcode-area { text-align: center; margin: 40px 0; }
-        #barcodeCanvas { width: 100% !important; height: auto !important; }
-        .footer-company { text-align: right; margin-top: 60px; font-size: 18px; font-weight: bold; }
+        .pdf-title { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .user-name { font-size: 18px; margin-bottom: 25px; border-bottom: 1px solid #000; display: inline-block; padding-right: 30px; }
+        .message { margin-bottom: 40px; font-size: 14px; text-align: justify; }
+        .barcode-area { text-align: center; margin: 40px 0; width: 100%; }
+        /* バーコードがはみ出さないよう横幅を制限 */
+        #barcodeCanvas { max-width: 100% !important; height: auto !important; }
+        .footer-company { text-align: right; margin-top: 80px; font-size: 16px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="input-container">
-    <h2 style="text-align:center">搭乗券データ作成</h2>
+    <h2 style="text-align:center; margin-bottom:20px;">搭乗手続き用2次元コード作成</h2>
     <div class="grid">
-        <div class="form-group full"><label>お名前（PDF表示用：様まで入力）</label><input type="text" id="val2" value="FUKUSHIMA/KAZUNARI 様"></div>
+        <div class="form-group full"><label>お客様名（例：FUKUSHIMA/KAZUNARI 様）</label><input type="text" id="val2" value="FUKUSHIMA/KAZUNARI 様"></div>
         <div class="form-group"><label>コード1</label><input type="text" id="val1" value="M1"></div>
         <div class="form-group"><label>クラス</label><input type="text" id="val3" value="E"></div>
         <div class="form-group"><label>コード2</label><input type="text" id="val4" value="EZO4ME"></div>
@@ -49,34 +51,39 @@
         <div class="form-group"><label>特殊1</label><input type="text" id="val8" value="G00000000"></div>
         <div class="form-group"><label>特殊2</label><input type="text" id="val9" value="040"></div>
         <div class="form-group full"><label>特殊3</label><input type="text" id="val10" value="2180000000I"></div>
-        <div class="form-group full"><label>弊社名</label><input type="text" id="companyName" value="株式会社 〇〇トラベル"></div>
+        <div class="form-group full"><label>弊社名（PDF表示用）</label><input type="text" id="companyName" value="株式会社 〇〇トラベル"></div>
     </div>
-    <button onclick="generatePDF()">PDFを生成して出力</button>
+    <button onclick="generatePDF()">案内書PDFを生成する</button>
 </div>
 
 <div id="pdf-wrapper">
     <div id="pdf-template">
         <div class="pdf-title">搭乗手続き用2次元コード</div>
+        
         <div class="user-name"><span id="out-name"></span></div>
+        
         <div class="message">
-            この度はご利用ありがとうございます。<br>
-            日本出発時又は元地出発時、下記のコードが必要となる場合がございます。<br><br>
-            読み取りで不具合がある場合は、通常のEチケット（電子チケット）を搭乗係員にご提出ください。<br>
-            良き旅行となるといいですね！
+            この度は弊社をご利用いただき、誠にありがとうございます。<br>
+            日本ご出発時、または現地ご出発の際、お手続きに下記の2次元コードが必要となる場合がございます。<br><br>
+            万が一、専用端末等での読み取りが正常に行われない場合は、お手数ですが通常のEチケット（電子チケット）を空港の搭乗係員へご提示くださいますようお願い申し上げます。<br><br>
+            道中お気をつけて、素敵なご旅行をお楽しみください。
         </div>
+
         <div class="barcode-area">
             <canvas id="barcodeCanvas"></canvas>
         </div>
+
         <div class="footer-company" id="out-company"></div>
     </div>
 </div>
 
 <script>
     async function generatePDF() {
-        // 1. バーコード用データの結合
+        // 1. バーコード用データの処理（名寄せ）
+        const rawName = document.getElementById('val2').value.replace(/ 様$/g, '').trim();
         const dataStr = 
             document.getElementById('val1').value +
-            document.getElementById('val2').value.replace(' 様', '').replace('様', '') +
+            rawName +
             document.getElementById('val3').value +
             document.getElementById('val4').value + " " +
             document.getElementById('val5').value +
@@ -86,7 +93,7 @@
             document.getElementById('val9').value + ">" +
             document.getElementById('val10').value;
 
-        // 2. バーコードを描画
+        // 2. バーコード生成
         const canvas = document.getElementById('barcodeCanvas');
         try {
             await bwipjs.toCanvas(canvas, {
@@ -97,31 +104,36 @@
                 includetext: false,
             });
         } catch (e) {
-            alert('バーコード作成に失敗しました: ' + e);
+            alert('バーコード作成に失敗いたしました。入力内容をご確認ください。');
             return;
         }
 
-        // 3. テキストをセット
+        // 3. 表示データの反映
         document.getElementById('out-name').innerText = document.getElementById('val2').value;
         document.getElementById('out-company').innerText = document.getElementById('companyName').value;
 
-        // 4. PDF化（真っ白対策：一瞬表示してキャプチャする）
+        // 4. PDF生成と出力（右切れ対策）
         const wrapper = document.getElementById('pdf-wrapper');
         const element = document.getElementById('pdf-template');
-        wrapper.style.display = 'block'; // 一時的に表示
+        
+        // 一時的に表示させてキャプチャ
+        wrapper.style.display = 'block';
 
         const opt = {
-            margin:       15,
+            margin:       [15, 15, 15, 15], // 上下左右に適切なマージン
             filename:     'boarding_guide.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, logging: false, useCORS: true },
+            image:        { type: 'jpeg', quality: 1.0 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true,
+                letterRendering: true
+            },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // PDF生成
         html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
             window.open(pdf.output('bloburl'), '_blank');
-            wrapper.style.display = 'none'; // 生成後にまた隠す
+            wrapper.style.display = 'none';
         });
     }
 </script>
