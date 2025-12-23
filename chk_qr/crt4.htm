@@ -4,33 +4,41 @@
     <meta charset="UTF-8">
     <title>搭乗手続き用コード生成</title>
     <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: "Helvetica Neue", "Arial", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
-        .container { max-width: 650px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: auto; }
-        h2 { color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-size: 0.85em; margin-bottom: 5px; color: #666; font-weight: bold; }
-        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-        .full-width { grid-column: span 2; }
-        .actions { margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
-        button { padding: 12px 30px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
-        #genBtn { background-color: #007bff; color: white; }
-        #genBtn:hover { background-color: #0056b3; }
-        #pdfBtn { background-color: #28a745; color: white; display: none; margin-left: 10px; }
-        #pdfBtn:hover { background-color: #218838; }
-        canvas { display: none; } /* バーコード自体は隠しておき、PDFでのみ使用 */
-        .preview-area { margin-top: 20px; text-align: center; color: #888; font-size: 0.9em; }
+        body { font-family: "Helvetica Neue", "Arial", "Hiragino Sans", "Meiryo", sans-serif; margin: 20px; background-color: #f0f2f5; }
+        .input-container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+        .form-group label { font-size: 12px; color: #666; font-weight: bold; }
+        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .full { grid-column: span 2; }
+        button { padding: 12px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #007bff; color: white; width: 100%; margin-top: 10px; }
+        
+        /* --- PDF出力用エリア（最初は隠しておく） --- */
+        #pdf-template {
+            width: 170mm; /* A4幅に合わせる */
+            min-height: 250mm;
+            padding: 20mm;
+            background: white;
+            position: absolute;
+            left: -9999px; /* 画面外に飛ばしておく */
+            line-height: 1.8;
+        }
+        .pdf-title { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .user-name { font-size: 18px; margin-bottom: 30px; border-bottom: 1px solid #ccc; display: inline-block; }
+        .message { margin-bottom: 40px; }
+        .barcode-area { text-align: center; margin: 50px 0; }
+        #barcodeCanvas { width: 80% !important; height: auto !important; }
+        .footer-company { text-align: right; margin-top: 100px; font-size: 16px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>搭乗用データ入力</h2>
-    
+<div class="input-container">
+    <h3 style="margin-top:0">1. データ入力</h3>
     <div class="grid">
-        <div class="form-group full-width"><label>お名前 (ローマ字)</label><input type="text" id="val2" value="FUKUSHIMA/KAZUNARI MR"></div>
+        <div class="form-group full"><label>お名前（様をつけてください）</label><input type="text" id="val2" value="FUKUSHIMA/KAZUNARI 様"></div>
         <div class="form-group"><label>コード1</label><input type="text" id="val1" value="M1"></div>
         <div class="form-group"><label>クラス</label><input type="text" id="val3" value="E"></div>
         <div class="form-group"><label>コード2</label><input type="text" id="val4" value="EZO4ME"></div>
@@ -39,29 +47,37 @@
         <div class="form-group"><label>RTN</label><input type="text" id="val7" value="356"></div>
         <div class="form-group"><label>特殊1</label><input type="text" id="val8" value="G00000000"></div>
         <div class="form-group"><label>特殊2</label><input type="text" id="val9" value="040"></div>
-        <div class="form-group full-width"><label>特殊3</label><input type="text" id="val10" value="2180000000I"></div>
-        <div class="form-group full-width"><label>弊社名 (PDF表示用)</label><input type="text" id="companyName" value="ABC TRAVEL SERVICES"></div>
+        <div class="form-group full"><label>特殊3</label><input type="text" id="val10" value="2180000000I"></div>
+        <div class="form-group full"><label>弊社名</label><input type="text" id="companyName" value="株式会社 〇〇トラベル"></div>
+    </div>
+    <button onclick="generatePDF()">案内書PDFを生成・出力する</button>
+</div>
+
+<div id="pdf-template">
+    <div class="pdf-title">搭乗手続き用2次元コード</div>
+    
+    <div class="user-name"><span id="out-name"></span></div>
+    
+    <div class="message">
+        この度はご利用ありがとうございます。<br>
+        日本出発時又は元地出発時、下記のコードが必要となる場合がございます。<br><br>
+        読み取りで不具合がある場合は、通常のEチケット（電子チケット）を搭乗係員にご提出ください。<br>
+        良き旅行となるといいですね！
     </div>
 
-    <div class="actions">
-        <button id="genBtn">データを確定する</button>
-        <button id="pdfBtn">PDF案内書を作成</button>
+    <div class="barcode-area">
+        <canvas id="barcodeCanvas"></canvas>
     </div>
 
-    <div class="preview-area" id="status">入力を完了してボタンを押してください</div>
-    <canvas id="barcodeCanvas"></canvas>
+    <div class="footer-company" id="out-company"></div>
 </div>
 
 <script>
-    const { jsPDF } = window.jspdf;
-    const genBtn = document.getElementById('genBtn');
-    const pdfBtn = document.getElementById('pdfBtn');
-    const canvas = document.getElementById('barcodeCanvas');
-
-    genBtn.onclick = () => {
+    function generatePDF() {
+        // 1. 文字列の結合
         const dataStr = 
             document.getElementById('val1').value +
-            document.getElementById('val2').value +
+            document.getElementById('val2').value.split(' ')[0] + // 名前部分のみ（スペース以降の「様」を抜く）
             document.getElementById('val3').value +
             document.getElementById('val4').value + " " +
             document.getElementById('val5').value +
@@ -71,6 +87,8 @@
             document.getElementById('val9').value + ">" +
             document.getElementById('val10').value;
 
+        // 2. バーコード生成
+        const canvas = document.getElementById('barcodeCanvas');
         try {
             bwipjs.toCanvas(canvas, {
                 bcid: 'pdf417',
@@ -80,65 +98,30 @@
                 includetext: false,
                 backgroundcolor: 'FFFFFF',
             });
-            pdfBtn.style.display = 'inline-block';
-            document.getElementById('status').innerText = "バーコード準備完了。PDFを作成できます。";
         } catch (e) {
-            alert('エラー: ' + e);
+            alert('バーコード生成エラー: ' + e);
+            return;
         }
-    };
 
-    pdfBtn.onclick = () => {
-        const name = document.getElementById('val2').value;
-        const company = document.getElementById('companyName').value;
-        const imgData = canvas.toDataURL('image/png');
-        
-        // PDF作成 (A4縦)
-        const pdf = new jsPDF('p', 'mm', 'a4');
+        // 3. PDF用テンプレートに値をセット
+        document.getElementById('out-name').innerText = document.getElementById('val2').value;
+        document.getElementById('out-company').innerText = document.getElementById('companyName').value;
 
-        // 注：標準のjsPDFは日本語フォントを持っていないため、
-        // 確実な表示のために、主要なテキストも一旦画像化するか、
-        // ここでは一番安全な「マルチバイト文字対応の仕組み」で実装します。
-        
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(18);
-        pdf.text("BOARDING PASS 2D-CODE", 105, 30, { align: "center" });
-        
-        pdf.setFontSize(12);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(`${name} SAMA`, 20, 50);
-        
-        // 案内文 (日本語を扱うための簡易措置として、英語/ローマ字併記を推奨しますが
-        // 以下のtext部分はそのまま出力されます。文字化けする場合はフォント追加が必要です)
-        let y = 65;
-        const lines = [
-            "Thank you for choosing our service.",
-            "Please present the code below at the time of departure.",
-            "",
-            "If the code cannot be read, please present your",
-            "standard E-ticket to the airport staff.",
-            "",
-            "Have a nice trip!"
-        ];
-        
-        lines.forEach(line => {
-            pdf.text(line, 20, y);
-            y += 7;
+        // 4. HTMLをPDFに変換して出力
+        const element = document.getElementById('pdf-template');
+        const opt = {
+            margin:       10,
+            filename:     'boarding_guide.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // PDF生成実行
+        html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+            window.open(pdf.output('bloburl'), '_blank');
         });
-
-        // バーコード配置
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = 140; // 少し小さめに配置
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, 'PNG', (210 - pdfWidth) / 2, 120, pdfWidth, pdfHeight);
-
-        // 弊社名
-        pdf.setFontSize(14);
-        pdf.text(company, 190, 270, { align: "right" });
-
-        // 別タブで表示
-        const blob = pdf.output('bloburl');
-        window.open(blob);
-    };
+    }
 </script>
 
 </body>
