@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <script src="https://unpkg.com/bwip-js"></script>
+    <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
 </head>
 <body>
 
@@ -21,9 +21,17 @@
 
         b.onclick = () => {
             if (!t.value) return;
+
+            // windowオブジェクトから確実にbwipjsを呼び出す
+            const generator = window.bwipjs || bwipjs;
+
+            if (!generator) {
+                alert("ライブラリがまだ読み込まれていません。再読み込みしてください。");
+                return;
+            }
+
             try {
-                // unpkg版のグローバル関数を呼び出し
-                bwipjs.toCanvas(c, {
+                generator.toCanvas(c, {
                     bcid: 'micropdf417',
                     text: t.value,
                     scale: 3,
@@ -33,6 +41,7 @@
                 });
                 d.style.display = 'inline';
             } catch (e) {
+                console.error(e);
                 alert('エラー: ' + e);
             }
         };
