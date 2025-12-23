@@ -2,21 +2,58 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <title>MicroPDF417 Reader</title>
     <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        #result-container { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
+        .label { font-weight: bold; color: #555; }
+        .value { color: #000; margin-bottom: 10px; }
+    </style>
 </head>
 <body>
 
-    余白のあるMicroPDF417形式2次元バーコードを読み込ませてください
+2.9<br />
+    
+    
+    <p>MicroPDF417形式などの画像を読み込ませてください</p>
+    
     <input type="file" id="u" accept="image/*">
-    <p id="r">結果を表示します</p>
+
+    <div id="result-container">
+        <div class="label">解析ステータス:</div>
+        <div id="status" class="value">ファイルを選択してください</div>
+        
+        <hr>
+        
+        <div class="label">読み取り形式:</div>
+        <div id="format" class="value">-</div>
+        
+        <div class="label">読み取り結果:</div>
+        <div id="content" class="value">-</div>
+    </div>
 
     <script>
         const reader = new ZXing.BrowserPDF417Reader();
-        const r = document.getElementById('r');
+        const statusEl = document.getElementById('status');
+        const formatEl = document.getElementById('format');
+        const contentEl = document.getElementById('content');
+
+        // ZXingのフォーマット番号を文字列に変換する関数
+        function getFormatName(format) {
+            // formatが数値の場合、ZXingのBarcodeFormatから名前を探す
+            const formatNames = Object.keys(ZXing.BarcodeFormat);
+            const found = formatNames.find(key => ZXing.BarcodeFormat[key] === format);
+            return found ? found : "Unknown (" + format + ")";
+        }
 
         document.getElementById('u').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            statusEl.innerText = "解析中...";
+            formatEl.innerText = "-";
+            contentEl.innerText = "-";
 
             const url = URL.createObjectURL(file);
             const img = new Image();
@@ -24,11 +61,16 @@
             img.onload = () => {
                 reader.decodeFromImageElement(img)
                     .then(result => {
-                        r.innerText = result.text;
+                        statusEl.innerText = "成功";
+                        // 形式（BarcodeFormat）を表示
+                        formatEl.innerText = getFormatName(result.format);
+                        // テキスト内容を表示
+                        contentEl.innerText = result.text;
                         URL.revokeObjectURL(url);
                     })
                     .catch(err => {
-                        r.innerText = "検出失敗: " + err;
+                        statusEl.innerText = "検出失敗";
+                        contentEl.innerText = "エラー: " + err;
                         URL.revokeObjectURL(url);
                     });
             };
