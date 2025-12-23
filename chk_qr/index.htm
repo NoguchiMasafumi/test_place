@@ -2,39 +2,47 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.11/dist/dbr.js"></script>
 </head>
 <body>
-2.4<br />
+2.5<br />
     <input type="file" id="u" accept="image/*">
-    <p id="r">ここに結果が出ます</p>
+    <p id="r">読み取り結果を待機中...</p>
 
     <script>
-        document.getElementById('u').onchange = (e) => {
+        // 体験版ライセンスキー（公開されている公式テスト用）
+        Dynamsoft.DBR.BarcodeReader.license = 'DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTc21nS0Z3S0RQayJ9';
+
+        let reader = null;
+
+        document.getElementById('u').onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
+            const r = document.getElementById('r');
+            r.innerText = "解析中...";
 
-                    try {
-                        // microPDF417を指定してデコード
-                        const result = bwipjs.readBarcode(canvas, 'micropdf417');
-                        document.getElementById('r').innerText = result.text;
-                    } catch (err) {
-                        document.getElementById('r').innerText = "失敗: " + err;
-                    }
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
+            try {
+                // リーダーの初期化（初回のみ時間がかかります）
+                reader = reader || await Dynamsoft.DBR.BarcodeReader.createInstance();
+                
+                // 読み取り設定をmicroPDF417に最適化
+                let settings = await reader.getRuntimeSettings();
+                settings.barcodeFormatIds = Dynamsoft.DBR.EnumBarcodeFormat.BF_MICRO_PDF417;
+                await reader.updateRuntimeSettings(settings);
+
+                // 解析実行
+                const results = await reader.decode(file);
+
+                if (results.length > 0) {
+                    r.innerText = "読取成功: " + results[0].barcodeText;
+                } else {
+                    r.innerText = "コードが見つかりませんでした。";
+                }
+            } catch (err) {
+                r.innerText = "エラー: " + err;
+                console.error(err);
+            }
         };
     </script>
 </body>
