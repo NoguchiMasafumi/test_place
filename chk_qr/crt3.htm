@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/bwip-js"></script>
+</head>
+<body>
+
+    <input type="text" id="t" value="ABCDEFG">
+    <button id="b">生成</button>
+    <br><br>
+    <canvas id="c"></canvas>
+    <br><br>
+    <button id="d" style="display:none;">JPGとして保存</button>
+
+    <script>
+        const t = document.getElementById('t');
+        const c = document.getElementById('c');
+        const b = document.getElementById('b');
+        const d = document.getElementById('d');
+
+        b.onclick = () => {
+            if (!t.value) return;
+            try {
+                // unpkg版のグローバル関数を呼び出し
+                bwipjs.toCanvas(c, {
+                    bcid: 'micropdf417',
+                    text: t.value,
+                    scale: 3,
+                    height: 10,
+                    includetext: true,
+                    backgroundcolor: 'FFFFFF'
+                });
+                d.style.display = 'inline';
+            } catch (e) {
+                alert('エラー: ' + e);
+            }
+        };
+
+        d.onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'micropdf417.jpg';
+            link.href = c.toDataURL('image/jpeg', 1.0);
+            link.click();
+        };
+    </script>
+</body>
+</html>
