@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF417 搭乗券ジェネレーター</title>
+    <script src="https://unpkg.com/bwip-js/dist/bwip-js-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: "Helvetica Neue", Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; display: flex; align-items: center; }
+        .form-group label { width: 120px; font-weight: bold; font-size: 0.9em; }
+        .form-group input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .buttons { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        #generateBtn { background-color: #007bff; color: white; margin-right: 10px; }
+        #pdfBtn { background-color: #28a745; color: white; display: none; }
+        canvas { border: 1px solid #eee; margin-top: 20px; max-width: 100%; height: auto; }
+        h2 { border-left: 5px solid #007bff; padding-left: 10px; margin-bottom: 25px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>搭乗券データ入力</h2>
+    
+    <div class="form-group"><label>コード1</label><input type="text" id="val1" value="M1"></div>
+    <div class="form-group"><label>お名前</label><input type="text" id="val2" value="FUKUSHIMA/KAZUNARI MR"></div>
+    <div class="form-group"><label>クラス</label><input type="text" id="val3" value="E"></div>
+    <div class="form-group"><label>コード2</label><input type="text" id="val4" value="EZO4ME"></div>
+    <div class="form-group"><label>方面</label><input type="text" id="val5" value="HNDDEL"></div>
+    <div class="form-group"><label>フライト</label><input type="text" id="val6" value="AI 0357"></div>
+    <div class="form-group"><label>RTN</label><input type="text" id="val7" value="356"></div>
+    <div class="form-group"><label>特殊1</label><input type="text" id="val8" value="G00000000"></div>
+    <div class="form-group"><label>特殊2</label><input type="text" id="val9" value="040"></div>
+    <div class="form-group"><label>特殊3</label><input type="text" id="val10" value="2180000000I"></div>
+
+    <div class="buttons">
+        <button id="generateBtn">バーコード作成</button>
+        <button id="pdfBtn">PDFを出力する</button>
+    </div>
+
+    <canvas id="barcodeCanvas"></canvas>
+</div>
+
+<script>
+    const { jsPDF } = window.jspdf;
+    
+    const generateBtn = document.getElementById('generateBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    const canvas = document.getElementById('barcodeCanvas');
+
+    // バーコード生成
+    generateBtn.onclick = () => {
+        // 全入力値を結合
+        const dataStr = 
+            document.getElementById('val1').value +
+            document.getElementById('val2').value +
+            document.getElementById('val3').value +
+            document.getElementById('val4').value + " " + // 例に合わせ半角スペース
+            document.getElementById('val5').value +
+            document.getElementById('val6').value + " " + // 例に合わせ半角スペース
+            document.getElementById('val7').value +
+            document.getElementById('val8').value + " " + // 例に合わせ半角スペース
+            document.getElementById('val9').value + ">" + // 例に合わせ記号
+            document.getElementById('val10').value;
+
+        try {
+            bwipjs.toCanvas(canvas, {
+                bcid: 'pdf417',
+                text: dataStr,
+                scale: 3,
+                height: 15,
+                includetext: false,
+                backgroundcolor: 'FFFFFF',
+                paddingwidth: 10,
+                paddingheight: 10,
+            });
+            pdfBtn.style.display = 'inline-block';
+        } catch (e) {
+            alert('生成エラー: ' + e);
+        }
+    };
+
+    // PDF生成・出力
+    pdfBtn.onclick = () => {
+        const imgData = canvas.toDataURL('image/png');
+        
+        // A4サイズのPDF作成 (横向き 'l' or 縦向き 'p')
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        pdf.setFontSize(16);
+        pdf.text("Boarding Pass Barcode", 20, 20);
+        
+        // 画像のサイズを計算 (Canvasの比率を維持して貼り付け)
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth() - 40;
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        pdf.addImage(imgData, 'PNG', 20, 30, pdfWidth, pdfHeight);
+        
+        // PDFを新しいタブで開く、またはダウンロード
+        // pdf.save("boarding-pass.pdf"); // 直接保存する場合
+        const blob = pdf.output('bloburl');
+        window.open(blob); // 別タブでPDFプレビューを表示
+    };
+</script>
+
+</body>
+</html>
